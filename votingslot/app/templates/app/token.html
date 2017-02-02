@@ -1,0 +1,140 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="msapplication-tap-highlight" content="no">
+	<meta name="description" content="">
+    <title>Slot Booking</title>
+    <link href="{% static 'icons/material-icons.css' %}" rel="stylesheet">
+	<link rel="stylesheet" href="{% static 'css/materialize.min.css' %}">
+	<link rel="stylesheet" href="{% static 'css/fscp.css' %}">
+</head>
+
+<body>
+<header>
+    <nav>
+        <div class="container">
+            <div class="row">
+                <div class="col s12 m12 l8 offset-l2">
+                    <div class="nav-wrapper ">
+                        <a href="#" class="brand-logo left">Logo</a>
+                        <a href="{% url 'logout' %}" class="right">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main>
+	<div class="container">
+        <div class="row">
+            <div class="col s12 m12 l8 offset-l2">
+                <div class="section">
+                    <h4 class="header">User Details</h4>
+                    <div class="divider bottom10"></div>
+                    <div class="row model-field">
+                        <div class="col l2 m3 s4 field-name">
+                            Name
+                        </div>
+                        <div class="col l10 m9 s8 field-value">
+                            {{ student.full_name }}
+                        </div>
+                    </div>
+                    <div class="row model-field">
+                        <div class="col l2 m3 s4 field-name">
+                            Roll No
+                        </div>
+                        <div class="col l10 m9 s8 field-value">
+                            {{ student.roll_no }}
+                        </div>
+                    </div>
+                </div>
+                {% if form %}
+                    <div class="section">
+                        <h4 class="header">Select Slot</h4>
+                        <div class="divider bottom10"></div>
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            {% for field in form %}
+                                <div class="row">
+                                    <div class="input-field col s12">
+                                        <span class="red-text">{{ field.errors }}</span>
+                                        {{ field }}
+                                        {{ field.label_tag }}
+                                        <small>{{ field.help_text }}</small>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <button type="submit" name="_submit" class="btn">Book</button>
+                        </form>
+                    </div>
+
+                    {% if slot_list.count > 0 %}
+                    <div class="section">
+                        <h4 class="header">Booked Slots</h4>
+                        <p>
+                            <strong>
+                                100 students have already registered in following slots.
+                                They are not available anymore.
+                            </strong>
+                        </p>
+                        <div class="divider bottom10"></div>
+                        {% for slot in slot_list %}
+                            <div class="row">
+                                <div class="col l2 m3 s4 ">
+                                    {{ forloop.counter }}. {{ slot }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                {% endif %}
+                {% if appointment %}
+                    <div class="section">
+                    <h4 class="header">Details of Booked Slot</h4>
+                    <div class="divider" style="margin-bottom: 10px"></div>
+                    <div class="row model-field">
+                        <div class="col l2 m3 s4 field-name">
+                            Slot Timing
+                        </div>
+                        <div class="col l10 m9 s8 field-value">
+                            {{ appointment.slot }}
+                        </div>
+                    </div>
+                    <div class="row model-field">
+                        <div class="col l2 m3 s4 field-name">
+                            Token No
+                        </div>
+                        <div class="col l10 m9 s8 field-value">
+                            {{ appointment.token }}
+                        </div>
+                    </div>
+                    <div class="row model-field">
+                        <div class="col l2 m3 s4 field-name">
+                            Booking Time
+                        </div>
+                        <div class="col l10 m9 s8 field-value">
+                            {{ appointment.created_on }}
+                        </div>
+                    </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</main>
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/materialize.min.js' %}"></script>
+<script>
+	$(document).ready(function(){
+	    $('select').material_select();
+	});
+</script>
+</body>
+</html>
