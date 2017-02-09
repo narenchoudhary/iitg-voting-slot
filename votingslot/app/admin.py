@@ -5,7 +5,7 @@ admin.site.site_header = 'Slot Booking Portal'
 
 
 class SlotModel(admin.ModelAdmin):
-    list_display = ['start_time', 'end_time', 'stud_count']
+    list_display = ['start_time', 'end_time', 'stud_count', 'max_limit']
 
 admin.site.register(Appointment)
 admin.site.register(Slot, SlotModel)

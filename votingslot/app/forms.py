@@ -1,5 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.db.models import F
 from django.utils.translation import ugettext as _
 
 from constants import LOGIN_SERVER
@@ -30,14 +31,14 @@ class TokenForm(forms.ModelForm):
         super(TokenForm, self).__init__(*args, **kwargs)
         if self.instance:
             self.fields['slot'].queryset = Slot.objects.filter(
-                stud_count__lt=100
+                stud_count__lt=F('max_limit')
             )
 
     def clean_slot(self):
         slot = self.cleaned_data.get('slot', None)
         if slot is None:
             raise ValidationError(_("Please select a slot"))
-        if slot.stud_count > 99:
+        if slot.stud_count > slot.max_limit:
             raise ValidationError(_(
                 "This slot is already filled. Select another slot."
             ))

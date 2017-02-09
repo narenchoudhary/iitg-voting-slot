@@ -1,8 +1,7 @@
 from __future__ import unicode_literals
 
-import uuid
-
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext as _
@@ -30,6 +29,7 @@ class Student(models.Model):
 class Slot(models.Model):
     start_time = models.TimeField()
     end_time = models.TimeField()
+    max_limit = models.IntegerField(default=100)
     stud_count = models.IntegerField(default=0)
 
     class Meta:
@@ -39,6 +39,11 @@ class Slot(models.Model):
         start_time = self.start_time.strftime("%I:%M %p")
         end_time = self.end_time.strftime("%I:%M %p")
         return "{} to {}".format(start_time, end_time)
+    
+    def save(self, **kwargs):
+        if self.max_limit < self.stud_count:
+            raise ValidationError("Slot limit reached.")
+        super(Slot, self).save(**kwargs)
 
 
 class Appointment(models.Model):
@@ -53,14 +58,16 @@ class Appointment(models.Model):
     def __unicode__(self):
         return self.token
 
-    @staticmethod
-    def generate_token():
-        return str(uuid.uuid4())[0:8]
+    def generate_token(self):
+        start_time = self.slot.start_time.strftime("%I")
+        end_time = self.slot.end_time.strftime("%I")
+        count = self.slot.stud_count
+        return "{}-{}-{}".format(start_time, count+1, end_time)
 
     def save(self, *args, **kwargs):
         if not self.id:
             self.created_on = timezone.now()
-            self.token = Appointment.generate_token()
+            self.token = self.generate_token()
             slot = self.slot
             slot.stud_count += 1
             slot.save()

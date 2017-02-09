@@ -1,5 +1,7 @@
 from django.contrib import auth
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import ValidationError
+from django.db.models import F
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.utils.http import is_safe_url
@@ -41,7 +43,7 @@ class LoginView(View):
                 else:
                     return redirect(redirect_to)
             else:
-                form.add_error(None, 'No such user exists.')
+                form.add_error(None, 'No user exists for given credentials.')
                 return render(request, self.template_name, dict(form=form))
         else:
             return render(request, self.template_name, dict(form=form))
@@ -52,6 +54,7 @@ class LogoutView(LoginRequiredMixin, View):
     View class for handling logout.
     """
     login_url = reverse_lazy('login')
+    raise_exception = False
     http_method_names = ['get', 'head', 'options']
 
     def get(self, request):
@@ -76,21 +79,34 @@ class TokenView(LoginRequiredMixin, View):
             appointment = Appointment.objects.get(student=student)
         else:
             form = TokenForm()
-        slot_list = Slot.objects.filter(stud_count__gt=99)
+        filled_slot_list = Slot.objects.filter(stud_count=F('max_limit'))
         context = dict(appointment=appointment, form=form,
-                       student=student, slot_list=slot_list)
+                       student=student, filled_slot_list=filled_slot_list)
         return render(request, self.template_name, context)
 
     def post(self, request):
         student = Student.objects.get(user=request.user)
-        slot_list = Slot.objects.filter(stud_count__gt=99)
+        filled_slot_list = Slot.objects.filter(stud_count=F('max_limit'))
         form = TokenForm(request.POST)
         if form.is_valid():
             appointment = form.save(commit=False)
             appointment.student = Student.objects.get(user=request.user)
-            appointment = form.save()
-            context = dict(student=student, appointment=appointment)
+            try:
+                appointment = form.save(commit=True)
+                # If appointment is saved assign form = None. Otherwise form
+                # will be rendered again in template.
+                # Template has a {% if form %} tag to check if form is present.
+                form = None
+            except ValidationError as e:
+                # if appointment is not saved, then assign appointment = None.
+                # Otheriwse **unsaved** appointment will be rendered in the
+                # template.
+                appointment = None
+                form.add_error('slot', e)
+            context = dict(student=student, appointment=appointment,
+                           form=form, filled_slot_list=filled_slot_list)
             return render(request, self.template_name, context)
         else:
-            context = dict(student=student, form=form, slot_list=slot_list)
+            context = dict(student=student, form=form,
+                           filled_slot_list=filled_slot_list)
             return render(request, self.template_name, context)

@@ -58,6 +58,19 @@
                     <div class="section">
                         <h4 class="header">Select Slot</h4>
                         <div class="divider bottom10"></div>
+                        <div class="error-alert">
+                            {% if form.errors %}
+                                {% if form.non_field_errors %}
+                                    <ul>
+                                        {% for error in form.non_field_errors %}
+                                            <li class="red-text">{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <p class="red-text">Please correct the errors as shown in the form.</p>
+                                {% endif %}
+                            {% endif %}
+                        </div>
                         <form action="" method="post">
                             {% csrf_token %}
                             {% for field in form %}
@@ -74,7 +87,7 @@
                         </form>
                     </div>
 
-                    {% if slot_list.count > 0 %}
+                    {% if filled_slot_list.count > 0 %}
                     <div class="section">
                         <h4 class="header">Booked Slots</h4>
                         <p>
@@ -84,7 +97,7 @@
                             </strong>
                         </p>
                         <div class="divider bottom10"></div>
-                        {% for slot in slot_list %}
+                        {% for slot in filled_slot_list %}
                             <div class="row">
                                 <div class="col l2 m3 s4 ">
                                     {{ forloop.counter }}. {{ slot }}
