@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
 
     url(r'^slot/', include('app.urls')),
+    url(r'^', include('app.urls')),
 ]
 
 if settings.DEBUG:
