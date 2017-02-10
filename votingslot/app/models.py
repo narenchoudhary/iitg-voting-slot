@@ -66,7 +66,7 @@ class Appointment(models.Model):
         start_time = self.slot.start_time.strftime("%I")
         end_time = self.slot.end_time.strftime("%I")
         count = self.slot.stud_count
-        return "{}-{}-{}".format(start_time, count+1, end_time)
+        return "{}-{:03}-{}".format(start_time, count+1, end_time)
 
     def save(self, *args, **kwargs):
         # ValidationError will be thrown if slot is already filled.
