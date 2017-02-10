@@ -45,6 +45,10 @@ class Slot(models.Model):
             raise ValidationError("Slot limit reached.")
         super(Slot, self).save(**kwargs)
 
+    @property
+    def is_filled(self):
+        return self.max_limit <= self.stud_count
+
 
 class Appointment(models.Model):
     student = models.ForeignKey(Student, null=False)
@@ -65,6 +69,9 @@ class Appointment(models.Model):
         return "{}-{}-{}".format(start_time, count+1, end_time)
 
     def save(self, *args, **kwargs):
+        # ValidationError will be thrown if slot is already filled.
+        if self.slot.is_filled:
+            raise ValidationError("Slot is already filled.")
         if not self.id:
             self.created_on = timezone.now()
             self.token = self.generate_token()
