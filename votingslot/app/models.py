@@ -38,7 +38,10 @@ class Slot(models.Model):
     def __unicode__(self):
         start_time = self.start_time.strftime("%I:%M %p")
         end_time = self.end_time.strftime("%I:%M %p")
-        return "{} to {}".format(start_time, end_time)
+        return "{} to {} ({}/{} available)".format(
+            start_time, end_time, self.max_limit-self.stud_count,
+            self.max_limit
+        )
     
     def save(self, **kwargs):
         if self.max_limit < self.stud_count:
