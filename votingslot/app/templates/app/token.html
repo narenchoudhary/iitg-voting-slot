@@ -10,8 +10,19 @@
 	<meta name="description" content="">
     <title>Slot Booking</title>
     <link href="{% static 'icons/material-icons.css' %}" rel="stylesheet">
-	<link rel="stylesheet" href="{% static 'css/materialize.min.css' %}">
+	<link rel="stylesheet" href="{% static 'css/materialize.css' %}">
 	<link rel="stylesheet" href="{% static 'css/fscp.css' %}">
+    <style>
+      body {
+        display: flex;
+        min-height: 100vh;
+        flex-direction: column;
+      }
+
+      main {
+          flex: 1 0 auto;
+      }
+    </style>
 </head>
 
 <body>
@@ -21,7 +32,7 @@
             <div class="row">
                 <div class="col s12 m12 l8 offset-l2">
                     <div class="nav-wrapper ">
-                        <a href="#" class="brand-logo left">Logo</a>
+                        <a href="#" class="brand-logo left">Slot Booking</a>
                         <a href="{% url 'logout' %}" class="right">Logout</a>
                     </div>
                 </div>
@@ -35,28 +46,25 @@
         <div class="row">
             <div class="col s12 m12 l8 offset-l2">
                 <div class="section">
-                    <h4 class="header">User Details</h4>
-                    <div class="divider bottom10"></div>
-                    <div class="row model-field">
-                        <div class="col l2 m3 s4 field-name">
-                            Name
-                        </div>
-                        <div class="col l10 m9 s8 field-value">
-                            {{ student.full_name }}
-                        </div>
-                    </div>
-                    <div class="row model-field">
-                        <div class="col l2 m3 s4 field-name">
-                            Roll No
-                        </div>
-                        <div class="col l10 m9 s8 field-value">
-                            {{ student.roll_no }}
-                        </div>
-                    </div>
+                    <p>
+                        You are logged in as <mark>{{ student.full_name }}.</mark>
+                    </p>
                 </div>
                 {% if form %}
                     <div class="section">
                         <h4 class="header">Select Slot</h4>
+                        <p>
+                            <strong>
+                                Once booked, slot cannot be changed.
+                                Please select your slot carefully.
+                            </strong>
+                        </p>
+                        <p>
+                            <strong>
+                                Slot availaibilty status is stated alongwith slot in the
+                                form below.
+                            </strong>
+                        </p>
                         <div class="divider bottom10"></div>
                         <div class="error-alert">
                             {% if form.errors %}
@@ -89,17 +97,17 @@
 
                     {% if filled_slot_list.count > 0 %}
                     <div class="section">
-                        <h4 class="header">Booked Slots</h4>
+                        <h4 class="header">Already Filled Slots</h4>
                         <p>
                             <strong>
-                                100 students have already registered in following slots.
+                                Maximum limit for following slots have been reached.
                                 They are not available anymore.
                             </strong>
                         </p>
                         <div class="divider bottom10"></div>
                         {% for slot in filled_slot_list %}
                             <div class="row">
-                                <div class="col l2 m3 s4 ">
+                                <div class="col l4 m6 s12 ">
                                     {{ forloop.counter }}. {{ slot }}
                                 </div>
                             </div>
@@ -122,7 +130,7 @@
                     </div>
                     <div class="row model-field">
                         <div class="col l2 m3 s4 field-name">
-                            Token No
+                            Token Number
                         </div>
                         <div class="col l10 m9 s8 field-value">
                             {{ appointment.token }}
@@ -142,6 +150,13 @@
         </div>
     </div>
 </main>
+<footer class="page-footer" style="padding-top: 0px;font-size: 16px">
+          <div class="footer-copyright">
+            <div class="container" style="text-align: center">
+            &copy SWC, IIT Guwahati | All rights reserved
+            </div>
+          </div>
+</footer>
 <script src="{% static 'js/jquery.min.js' %}"></script>
 <script src="{% static 'js/materialize.min.js' %}"></script>
 <script>

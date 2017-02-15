@@ -32,7 +32,8 @@ class TokenForm(forms.ModelForm):
         if self.instance:
             self.fields['slot'].queryset = Slot.objects.filter(
                 stud_count__lt=F('max_limit')
-            )
+            ).order_by('start_time')
+            self.fields['slot'].label = 'Select a slot from dropdown'
 
     def clean_slot(self):
         slot = self.cleaned_data.get('slot', None)
