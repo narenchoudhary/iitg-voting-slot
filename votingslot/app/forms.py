@@ -8,7 +8,7 @@ from models import Appointment, Slot
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField(required=True, label='webmail')
+    username = forms.CharField(required=True, label='Webmail')
     password = forms.CharField(required=True, widget=forms.PasswordInput)
     login_server = forms.ChoiceField(required=True, choices=LOGIN_SERVER)
 
