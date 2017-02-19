@@ -21,8 +21,8 @@ class LoginView(View):
 
     def get(self, request):
         self.next = request.GET.get('next', '')
-        if request.user.is_authenticated():
-                return redirect('token')
+        if request.user.is_authenticated() and not request.user.is_superuser:
+            return redirect('token')
         args = dict(form=LoginForm(None), next=self.next)
         return render(request, self.template_name, args)
 
@@ -36,12 +36,15 @@ class LoginView(View):
 
             user = auth.authenticate(username=username, password=password,
                                      server=server, port=self.port)
-            if user is not None:
+            if user is not None and user.is_active:
                 if not is_safe_url(url=redirect_to, host=request.get_host()):
                     auth.login(request=request, user=user)
                     return redirect('token')
                 else:
                     return redirect(redirect_to)
+            elif not user.is_active:
+                form.add_error(None, 'User login has been disabled')
+                return render(request, self.template_name, dict(form=form))
             else:
                 form.add_error(None, 'No user exists for given credentials.')
                 return render(request, self.template_name, dict(form=form))
