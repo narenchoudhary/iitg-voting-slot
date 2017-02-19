@@ -20,10 +20,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
+    url(r'^slot-booking/admin/', admin.site.urls),
 
-    url(r'^slot/', include('app.urls')),
-    url(r'^', include('app.urls')),
+    url(r'^slot-booking/slot/', include('app.urls')),
+    url(r'^slot-booking/', include('app.urls')),
 ]
 
 if settings.DEBUG:
