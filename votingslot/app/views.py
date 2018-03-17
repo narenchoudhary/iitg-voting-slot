@@ -42,7 +42,7 @@ class LoginView(View):
                     return redirect('token')
                 else:
                     return redirect(redirect_to)
-            elif not user.is_active:
+            elif user is not None not user.is_active:
                 form.add_error(None, 'User login has been disabled')
                 return render(request, self.template_name, dict(form=form))
             else:
