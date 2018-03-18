@@ -38,7 +38,7 @@ DEPARTMENT = [
 
 PROGRAMMES = [
     ('Dual(MTech+PhD)', 'Dual(MTech+PhD)'),
-    ('Dual(MS+PhD)', 'Dual(MS+PhD)'),
+    ('DUAL(MS+PHD)', 'DUAL(MS+PHD)'),
     ('BTech', 'BTech'),
     ('BDes', 'BDes'),
     ('MTech', 'MTech'),
